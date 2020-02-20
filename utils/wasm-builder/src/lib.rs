@@ -178,11 +178,14 @@ fn write_file_if_changed(file: PathBuf, content: String) {
 
 /// Get a cargo command that compiles with nightly
 fn get_nightly_cargo() -> CargoCommand {
+	let env_cargo = CargoCommand::new(
+		&env::var("CARGO").expect("`CARGO` env variable is always set by cargo"),
+	);
 	let default_cargo = CargoCommand::new("cargo");
 	let mut rustup_run_nightly = CargoCommand::new("rustup");
 	rustup_run_nightly.args(&["run", "nightly", "cargo"]);
 
-	if default_cargo.is_nightly() {
+	if env_cargo.is_nightly() {
 		default_cargo
 	} else if rustup_run_nightly.works() {
 		rustup_run_nightly
